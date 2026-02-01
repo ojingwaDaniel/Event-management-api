@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Attendee;
+use App\Models\Event;
 use Illuminate\Http\Request;
 
 class AttendeeController extends Controller
@@ -13,6 +15,7 @@ class AttendeeController extends Controller
     public function index()
     {
         //
+        return Attendee::all();
     }
 
     /**
@@ -26,9 +29,11 @@ class AttendeeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Attendee $attendee)
     {
         //
+        return $attendee;
+
     }
 
     /**

@@ -5,4 +5,4 @@ use App\Http\Controllers\Api\EventController;
 use Illuminate\Support\Facades\Route;
 
 Route::apiResource("events",EventController::class);
-Route::apiResource("attendees",AttendeeController::class)->scoped(["attendee" => "event"]);
+Route::apiResource("events.attendees",AttendeeController::class)->scoped(["attendee" => "event"]);

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Event;
 use Illuminate\Http\Request;
 
 class EventController extends Controller
@@ -13,6 +14,7 @@ class EventController extends Controller
     public function index()
     {
         //
+        return Event::all();
     }
 
     /**
@@ -21,14 +23,26 @@ class EventController extends Controller
     public function store(Request $request)
     {
         //
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            "description" => "nullable|string",
+            "start_time" => "required|date",
+            "end_time" => "required|date|after:start_time"
+        ]);
+        $event = Event::create([
+            ...$validatedData,
+            "user_id" => 1
+        ]);
+        return $event;
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Event $event)
     {
         //
+        return $event;
     }
 
     /**

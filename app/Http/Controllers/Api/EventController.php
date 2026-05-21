@@ -17,9 +17,21 @@ class EventController extends Controller
     public function index()
     {
         //
+        $query = Event::query();
+        $include = request()->query("include");
+        $formatted = $include ? array_map("trim",explode(",",$include)):[];
+        $acceptedRelations = ["user","attendees","attendees.user"];
+        foreach($acceptedRelations as $acceptedRelation){
+            $query->when(
+                in_array($acceptedRelation,$formatted),
+                fn($q) => $q->with($acceptedRelation)
+            );
+        }
       
-        return EventResource::collection(Event::with("user")->get());
+        return EventResource::collection($query->latest()->paginate());
     }
+
+  
 
     /**
      * Store a newly created resource in storage.

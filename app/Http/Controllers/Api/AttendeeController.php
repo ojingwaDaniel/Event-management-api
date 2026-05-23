@@ -6,19 +6,18 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\AttendeeResource;
 use App\Models\Attendee;
 use App\Models\Event;
+use App\Traits\LoadRelationship;
 use Illuminate\Http\Request;
 
 class AttendeeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(Event $event)
+    use LoadRelationship;
+    private $acceptedRelations = ["user","event"];
+    public function index( Event $event)
     {
-        //
-        $attendees = $event->attendees()->latest()->paginate();
-        return AttendeeResource::collection($attendees);
+        $attendees = $this->applyIncludeRelation($event->attendees(),$this->acceptedRelations);
 
+        return AttendeeResource::collection($attendees->latest()->paginate());
     }
 
     /**
@@ -30,6 +29,7 @@ class AttendeeController extends Controller
         $attendee = $event->attendees()->create([
             "user_id" => 1
         ]);
+        $attendee = $this->applyIncludeRelation($attendee,$this->acceptedRelations);
         return new AttendeeResource($attendee);
 
     }
@@ -40,7 +40,7 @@ class AttendeeController extends Controller
     public function show(Event $event, Attendee $attendee)
     {
         //
-        return new AttendeeResource($attendee);
+        return new AttendeeResource($this->applyIncludeRelation($attendee,$this->acceptedRelations));
     }
 
     /**

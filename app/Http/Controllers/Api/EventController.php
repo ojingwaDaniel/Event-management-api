@@ -7,31 +7,22 @@ use App\Http\Requests\StoreEventRequest;
 use App\Http\Requests\UpdateEventRequest;
 use App\Http\Resources\EventResource;
 use App\Models\Event;
+use App\Traits\LoadRelationship;
 use Illuminate\Http\Request;
 
 class EventController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
+    use LoadRelationship;
+    private array $acceptedRelations = ["user", "attendees", "attendees.user"];
     public function index()
     {
         //
-        $query = Event::query();
-        $include = request()->query("include");
-        $formatted = $include ? array_map("trim",explode(",",$include)):[];
-        $acceptedRelations = ["user","attendees","attendees.user"];
-        foreach($acceptedRelations as $acceptedRelation){
-            $query->when(
-                in_array($acceptedRelation,$formatted),
-                fn($q) => $q->with($acceptedRelation)
-            );
-        }
-      
+        $query = $this->applyIncludeRelation(Event::query());
         return EventResource::collection($query->latest()->paginate());
     }
 
-  
+
 
     /**
      * Store a newly created resource in storage.
@@ -43,7 +34,7 @@ class EventController extends Controller
             ...$request->validated(),
             "user_id" => 1
         ]);
-        return new EventResource($event);
+        return new EventResource($this->applyIncludeRelation($event,$this->acceptedRelations));
     }
 
     /**
@@ -52,8 +43,8 @@ class EventController extends Controller
     public function show(Event $event)
     {
         //
-        $event->load("user","attendees");
-        return new EventResource($event);
+        
+        return new EventResource($this->applyIncludeRelation($event,$this->acceptedRelations));
     }
 
     /**
@@ -62,9 +53,9 @@ class EventController extends Controller
     public function update(UpdateEventRequest $request, Event $event)
     {
         //
-        
+
         $event->update($request->validated());
-        return new EventResource($event);
+        return new EventResource($this->applyIncludeRelation($event,$this->acceptedRelations));
     }
 
     /**

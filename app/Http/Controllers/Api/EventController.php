@@ -9,16 +9,21 @@ use App\Http\Resources\EventResource;
 use App\Models\Event;
 use App\Traits\LoadRelationship;
 use Illuminate\Http\Request;
+use Laravel\Sanctum\Sanctum;
 
 class EventController extends Controller
 {
     
     use LoadRelationship;
     private array $acceptedRelations = ["user", "attendees", "attendees.user"];
+    public function __construct(){
+        $this->middleware("auth:sanctum")->except(["index","show"]);
+    }
+  
     public function index()
     {
         //
-        $query = $this->applyIncludeRelation(Event::query());
+        $query = $this->applyIncludeRelation(Event::query(),$this->acceptedRelations);
         return EventResource::collection($query->latest()->paginate());
     }
 
@@ -32,7 +37,7 @@ class EventController extends Controller
         //
         $event = Event::create([
             ...$request->validated(),
-            "user_id" => 1
+            "user_id" => $request->user()->id
         ]);
         return new EventResource($this->applyIncludeRelation($event,$this->acceptedRelations));
     }

@@ -7,6 +7,7 @@ use App\Http\Requests\StoreEventRequest;
 use App\Http\Requests\UpdateEventRequest;
 use App\Http\Resources\EventResource;
 use App\Models\Event;
+use App\Models\User;
 use App\Traits\LoadRelationship;
 use Illuminate\Http\Request;
 use Laravel\Sanctum\Sanctum;
@@ -18,6 +19,7 @@ class EventController extends Controller
     private array $acceptedRelations = ["user", "attendees", "attendees.user"];
     public function __construct(){
         $this->middleware("auth:sanctum")->except(["index","show"]);
+        // $this->authorizeResource(Event::class,"event");
     }
   
     public function index()
@@ -58,7 +60,7 @@ class EventController extends Controller
     public function update(UpdateEventRequest $request, Event $event)
     {
         //
-
+        // $this->authorize("update-event",$event);
         $event->update($request->validated());
         return new EventResource($this->applyIncludeRelation($event,$this->acceptedRelations));
     }
@@ -68,10 +70,17 @@ class EventController extends Controller
      */
     public function destroy(Event $event)
     {
-        //
+    
         $event->delete();
         return response()->json([
             "message" => "Deleted the event sucessfully"
         ]);
+    }
+    public function userEvents(User $user){
+        return  response()->json([
+            $user->events
+
+        ]) ;
+
     }
 }

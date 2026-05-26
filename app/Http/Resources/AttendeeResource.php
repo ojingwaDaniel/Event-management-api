@@ -15,8 +15,11 @@ class AttendeeResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            "Attendee Name" => new UserResource($this->whenLoaded("user")),
-            "Event Name" => new EventResource($this->whenLoaded("event"))
+            "Attendee Id" => $this->id,
+            "Attendee Credentials" => new UserResource($this->whenLoaded("user")),
+            "Event Credential" => $this->event,
+            
+            
         ];
     }
 }

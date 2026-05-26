@@ -13,6 +13,10 @@ class AttendeeController extends Controller
 {
     use LoadRelationship;
     private $acceptedRelations = ["user","event"];
+    public function __construct(){
+        $this->middleware("auth:sanctum")->except(["index","show","update"]);
+    }
+    
     public function index( Event $event)
     {
         $attendees = $this->applyIncludeRelation($event->attendees(),$this->acceptedRelations);
@@ -57,6 +61,8 @@ class AttendeeController extends Controller
     public function destroy(Event $event, Attendee $attendee)
     {
         //
+       
+        // $this->authorize("delete-attendee",[$event,$attendee]);
         $attendee->delete();
         return response()->json([
             "message" => "Attendee Deleted sucessfully"

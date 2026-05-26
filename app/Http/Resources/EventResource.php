@@ -15,11 +15,12 @@ class EventResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            "Event Owner" => new UserResource($this->whenLoaded("user")),
             "Event Name" => $this->name,
             "description" => $this->description,
             "start_at" => $this->start_time,
             "end_at" => $this->end_time,
-            "Event Owner" => new UserResource($this->whenLoaded("user")),
+            
             "Event Attendees" => AttendeeResource::collection($this->whenLoaded("attendees"))
         ];
     }

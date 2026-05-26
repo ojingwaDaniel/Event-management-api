@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\EventController;
 use Illuminate\Support\Facades\Route;
 
 Route::apiResource("events",EventController::class);
+Route::get("/users/{user}/events",[EventController::class,"userEvents"]);
 Route::apiResource("events.attendees",
 AttendeeController::class)->scoped()->except("update");  
 Route::post("/login",[AuthController::class,"login"]);

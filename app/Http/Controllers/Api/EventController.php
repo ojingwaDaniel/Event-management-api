@@ -18,8 +18,8 @@ class EventController extends Controller
     use LoadRelationship;
     private array $acceptedRelations = ["user", "attendees", "attendees.user"];
     public function __construct(){
-        $this->middleware("auth:sanctum")->except(["index","show"]);
-        // $this->authorizeResource(Event::class,"event");
+        $this->middleware("auth:sanctum")->except(["index","show","userEvents"]);
+        $this->authorizeResource(Event::class,"event");
     }
   
     public function index()

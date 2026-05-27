@@ -15,6 +15,7 @@ class AttendeeController extends Controller
     private $acceptedRelations = ["user","event"];
     public function __construct(){
         $this->middleware("auth:sanctum")->except(["index","show","update"]);
+        $this->authorizeResource(Attendee::class,"attendee");
     }
     
     public function index( Event $event)
@@ -50,10 +51,7 @@ class AttendeeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+   
 
     /**
      * Remove the specified resource from storage.

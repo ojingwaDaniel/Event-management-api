@@ -15,6 +15,7 @@ class AttendeeController extends Controller
     private $acceptedRelations = ["user","event"];
     public function __construct(){
         $this->middleware("auth:sanctum")->except(["index","show","update"]);
+        $this->middleware("throttle:60,1")->only(["show","destroy"]);
         $this->authorizeResource(Attendee::class,"attendee");
     }
     
@@ -32,7 +33,7 @@ class AttendeeController extends Controller
     {
         //
         $attendee = $event->attendees()->create([
-            "user_id" => 1001
+            "user_id" => $request->user()->id
         ]);
         $attendee = $this->applyIncludeRelation($attendee,$this->acceptedRelations);
         return new AttendeeResource($attendee);
